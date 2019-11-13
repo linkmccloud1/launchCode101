@@ -121,11 +121,11 @@ function runProgram(scoreKinds: ScoreKind[]): void {
 
     let choice:number = state.alg(scoreKinds)
 
-    console.log('\nUsage: Enter a word to score, or "Stop" to exit the program.\nYou may also type "Select Algorithm" to change how words are scored.')
+    console.log('\nUsage: Enter a word to score, or "Exit" to exit the program.\nYou may also type "Select Algorithm" to change how words are scored.')
 
     let input:string = state.word()
 
-    while (input !== 'Stop' && input !== 'stop') {
+    while (input !== 'Exit' && input !== 'exit') {
         if (input.toLowerCase() === 'select algorithm') {
             choice = state.alg(scoreKinds)
             input = state.word()
@@ -135,7 +135,7 @@ function runProgram(scoreKinds: ScoreKind[]): void {
             input = state.word()
         }
 
-        if (input === 'Stop' || input === 'stop') {
+        if (input === 'Exit' || input === 'exit') {
             break;
         }
     }

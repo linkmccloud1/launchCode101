@@ -29,7 +29,7 @@ describe("launchOutput function", () => {
 
     it("should return 'Launch Rocks!' when evenly divisible by both 2 & 5", () => {
         let output = launchOutput(20)
-        assert.strictEqual(output, 'Launch Rocks!')
+        assert.strictEqual(output, 'Launch Rocks! (CRASH!!!!)')
     })
 
     it("should return 'LaunchCode Rocks!' when evenly divisible by all of 2, 3, & 5", () => {

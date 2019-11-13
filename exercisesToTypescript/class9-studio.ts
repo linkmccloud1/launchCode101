@@ -1,47 +1,25 @@
-function divByTwo(num:number):string {
-    if (num % 2) {
-        return ''
-    } else {
-        return 'Launch'
-    }
+type launchCode = {
+    Factor: number
+    Value: string
 }
 
-function divByThree(num:number):string {
-    if (num % 3) {
-        return ''
-    } else {
-        return 'Code'
-    }
-}
+const launchCodes: launchCode[] = [
+    { Factor: 2, Value: 'Launch' },
+    { Factor: 3, Value: 'Code' },
+    { Factor: 5, Value: 'Rocks' }
+]
 
-function divByFive(num:number):string {
-    if (num % 5) {
-        return ''
-    } else {
-        return 'Rocks'
-    }
-}
+export default function launchOutput(num:number):string {
+    let result:string = 
+        launchCodes
+            .map(code => (num % code.Factor === 0) ? code.Value : '')
+            .reduce((acc, res) => acc + ((acc === 'LaunchCode' && res === 'Rocks') ? ' ' : '') 
+                                      + ((acc === 'Launch' && res === 'Rocks') ? ' ' : '')
+                                      + ((acc === 'Code' && res === 'Rocks') ? ' ' : '')
+                                      + res)
+            + '!'
 
-export default function launchOutput(x:number):string {
-    let two = divByTwo(x)
-    let three = divByThree(x)
-    let five = divByFive(x)
-
-    if (two && three && five) {
-        return `${two}${three} ${five}!`
-    } else if (two && three) {
-        return `${two}${three}!`
-    } else if (three && five) {
-        return `${three} ${five}!`
-    } else if (two && five) {
-        return `${two} ${five}!`
-    } else if (two) {
-        return `${two}!`
-    } else if (three) {
-        return `${three}!`
-    } else if (five) {
-        return `${five}!`
-    } else {
-        return "Rutabagas! That doesn't work."
-    }
+    return ((result === '!')
+        ? "Rutabagas! That doesn't work." 
+        : ((result === 'Launch Rocks!') ? result + ' (CRASH!!!!)' : result))
 }

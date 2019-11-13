@@ -1,5 +1,9 @@
 const input = require('readline-sync')
 
+type oldScoreKey = { [key: string]: string[] }
+
+type newScoreKey = { [key: string]: number }
+
 type ScoreKind = {
     name: string
     description: string
@@ -13,7 +17,7 @@ type input = {
 }
 
 // here is the oldScoreKey object
-const oldScoreKey: {} = {
+const oldScoreKey: oldScoreKey = {
     1: ['A', 'E', 'I', 'O', 'U', 'L', 'N', 'R', 'S', 'T'],
     2: ['D', 'G'],
     3: ['B', 'C', 'M', 'P'],
@@ -24,14 +28,14 @@ const oldScoreKey: {} = {
 }
 
 // code your transform function here
-function transform(oldObj: {}): {} {
-    let newObj: {} = {}
-    Object.keys(oldObj).map((item:string) => oldObj[item].map((x, index:number) => newObj[`${oldObj[item][index]}`] = item))
+function transform(oldObj: oldScoreKey): {} {
+    let newObj: newScoreKey = {}
+    Object.keys(oldObj).map((item) => oldObj[item].map((x, index:number) => newObj[`${oldObj[item][index]}`] = Number(item)))
     return newObj
 }
 
 // use the transform function to create your newScoreKey object here
-let letters: {} = transform(oldScoreKey)
+let letters: newScoreKey = transform(oldScoreKey)
 
 // handle blank tiles by adding ' ' to newScoreKey here
 letters[' '] = 0
@@ -40,7 +44,7 @@ letters[' '] = 0
 let scrabble: ScoreKind = {
     name: 'Scrabble',
     description: 'A traditional scoring algorithm.',
-    scoreFunction: function (input:string, pointStruct:{} = letters): number {
+    scoreFunction: function (input:string, pointStruct:newScoreKey = letters): number {
         // assigns points based on a given point object
         const word = input.toUpperCase().split('')
         let points: number = 0

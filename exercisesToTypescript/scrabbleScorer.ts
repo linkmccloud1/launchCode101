@@ -7,7 +7,8 @@ interface Algorithm {
 }
 
 interface input {
-    algChoice(): number
+    algValid(): number
+    alg(algorithms: Algorithm[]): number
     word(): string
 }
 
@@ -42,7 +43,7 @@ letters[' '] = 0
 // create your scoringAlgorithms objects here
 let scrabble: Algorithm = {
     name: 'Scrabble',
-    description: 'The traditional scoring algorithm.',
+    description: 'A traditional scoring algorithm.',
     scoreFunction: function (input:string, pointStruct:{} = letters): number {
         // assigns points based on a given point object
         const word = input.toUpperCase().split('')
@@ -88,8 +89,9 @@ let vowel: Algorithm = {
 // create your scoringAlgorithms array here
 let scoringAlgorithms: Algorithm[] = [scrabble, simple, vowel]
 
+// Handle user input (algorithm choice & word entry)
 let state: input = {
-    algChoice: function(): number {
+    algValid: function(): number {
         let options: number[] = [0, 1, 2]
         let choice: number = Number(input.question("Enter 0, 1, or 2: "))
         while (!options.includes(choice)) {
@@ -97,66 +99,49 @@ let state: input = {
         }
         return choice
     },
+    alg: function(algorithms: Algorithm[]): number {
+        console.log(`\nWhich scoring algorithm would you like to use?\n`)
+        scoringAlgorithms.map((x:Algorithm, index) => console.log(`${index} - ${x.name}: ${x.description}`))
+        console.log('')
+        let choice = this.algValid()
+        console.log(`\nUsing the ${algorithms[choice].name} algorithm: ${algorithms[choice].description}`)
+        return choice
+    },
     word: function(): string {
-        let word = input.question('Please enter a word or command: ')
+        let word = input.question('\nPlease enter a word or command: ')
         let test = word.match(/[^a-zA-Z\u0020]/)
-        return 'ha'
+        while (test !== null) {
+            word = input.question('\nInvalid input! Please enter a word or command: ')
+        }
+        return word
     }
 }
 
-// code your initialPrompt function here
-function initialPrompt(): number {
-    console.log(`Welcome to the Scrabble score calculator!\n\nWhich scoring algorithm would you like to use?\n`)
-    scoringAlgorithms.map((x:Algorithm, index) => console.log(`${index} - ${x.name}: ${x.description}`))
-    console.log('')
-    return state.algChoice()
-}
+// Main program function
+function runProgram(algorithms: Algorithm[]): void {
+    console.log('Welcome to the Scrabble score calculator!')
 
-// code your wordValidate function here
-function wordValidate(word: string): boolean {
-    let test = word.match(/[^a-zA-Z\u0020]/)
-    if (test === null) {
-        return true
-    } else {
-        return false
-    }
-}
+    let choice:number = state.alg(algorithms)
 
-function userWord(): string {
-    let entry: string = input.question('\nPlease enter a word to score, or "Stop" to exit the program.\nYou may also type "Algorithm Select" to return to the selection prompt: ')
-    return entry
-}
+    console.log('\nUsage: Enter a word to score, or "Stop" to exit the program.\nYou may also type "Select Algorithm" to change how words are scored.')
 
-// code your runProgram function here
-function runProgram(scoreAlgo: Algorithm[]): void {
-    let userChoice = initialPrompt()
-    let input: string = ' '
-
-    console.log(`\nUsing algorithm: ${scoreAlgo[userChoice].name}: ${scoreAlgo[userChoice].description}`)
-
-    input = userWord()
+    let input:string = state.word()
 
     while (input !== 'Stop') {
+        if (input.toLowerCase() === 'select algorithm') {
+            choice = state.alg(algorithms)
+            input = state.word()
+        } else {
+            let points = algorithms[choice].scoreFunction(input)
+            console.log(`\n>>> Score for "${input}": ${points} <<<`)
+            input = state.word()
+        }
+
         if (input === 'Stop' || input === 'stop') {
             break;
         }
-        
-        if (input.toLowerCase() === 'algorithm select') {
-            userChoice = initialPrompt()
-            console.log(`\nUsing algorithm: ${scoreAlgo[userChoice].name}: ${scoreAlgo[userChoice].description}`)
-            input = userWord()
-        } else {
-            if (wordValidate(input)) {
-                let points = scoreAlgo[userChoice].scoreFunction(input)
-                console.log(`\n>>> Score for "${input}": ${points} <<<`)
-                input = userWord()
-            } else {
-                console.log('Invalid input!')
-                input = userWord()
-            }
-        }
     }
 }
 
-// call the runProgram function here
+// Run main program function
 runProgram(scoringAlgorithms)

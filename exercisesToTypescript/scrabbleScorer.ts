@@ -1,14 +1,14 @@
 const input = require('readline-sync')
 
-interface Algorithm {
+type ScoreKind = {
     name: string
     description: string
     scoreFunction(input: string, pointStruct?: {}): number
 }
 
-interface input {
+type input = {
     algValid(): number
-    alg(algorithms: Algorithm[]): number
+    alg(scoreKinds: ScoreKind[]): number
     word(): string
 }
 
@@ -41,7 +41,7 @@ let letters: {} = transform(oldScoreKey)
 letters[' '] = 0
 
 // create your scoringAlgorithms objects here
-let scrabble: Algorithm = {
+let scrabble: ScoreKind = {
     name: 'Scrabble',
     description: 'A traditional scoring algorithm.',
     scoreFunction: function (input:string, pointStruct:{} = letters): number {
@@ -55,7 +55,7 @@ let scrabble: Algorithm = {
     }
 }
 
-let simple: Algorithm = {
+let simple: ScoreKind = {
     name: 'Simple Score',
     description: 'Each letter is worth 1 point.',
     scoreFunction: function (input:string): number {
@@ -63,7 +63,7 @@ let simple: Algorithm = {
     }
 }
 
-let vowel: Algorithm = {
+let vowel: ScoreKind = {
     name: 'Bonus Vowels',
     description: 'Vowels are 3 pts, consonants are 1 pt.',
     scoreFunction: function (input:string): number {
@@ -87,7 +87,7 @@ let vowel: Algorithm = {
 }
 
 // create your scoringAlgorithms array here
-let scoringAlgorithms: Algorithm[] = [scrabble, simple, vowel]
+let scoringAlgorithms: ScoreKind[] = [scrabble, simple, vowel]
 
 // Handle user input (algorithm choice & word entry)
 let state: input = {
@@ -99,12 +99,12 @@ let state: input = {
         }
         return choice
     },
-    alg: function(algorithms: Algorithm[]): number {
+    alg: function(scoreKinds: ScoreKind[]): number {
         console.log(`\nWhich scoring algorithm would you like to use?\n`)
-        scoringAlgorithms.map((x:Algorithm, index) => console.log(`${index} - ${x.name}: ${x.description}`))
+        scoringAlgorithms.map((x:ScoreKind, index) => console.log(`${index} - ${x.name}: ${x.description}`))
         console.log('')
         let choice = this.algValid()
-        console.log(`\nUsing the ${algorithms[choice].name} algorithm: ${algorithms[choice].description}`)
+        console.log(`\nUsing the ${scoreKinds[choice].name} algorithm: ${scoreKinds[choice].description}`)
         return choice
     },
     word: function(): string {
@@ -118,21 +118,21 @@ let state: input = {
 }
 
 // Main program function
-function runProgram(algorithms: Algorithm[]): void {
+function runProgram(scoreKinds: ScoreKind[]): void {
     console.log('Welcome to the Scrabble score calculator!')
 
-    let choice:number = state.alg(algorithms)
+    let choice:number = state.alg(scoreKinds)
 
-    console.log('\nUsage: Enter a word to score, or "Stop" to exit the program.\nYou may also type "Select Algorithm" to change how words are scored.')
+    console.log('\nUsage: Enter a word to score, or "Stop" to exit the program.\nYou may also type "Select ScoreKind" to change how words are scored.')
 
     let input:string = state.word()
 
     while (input !== 'Stop') {
         if (input.toLowerCase() === 'select algorithm') {
-            choice = state.alg(algorithms)
+            choice = state.alg(scoreKinds)
             input = state.word()
         } else {
-            let points = algorithms[choice].scoreFunction(input)
+            let points = scoreKinds[choice].scoreFunction(input)
             console.log(`\n>>> Score for "${input}": ${points} <<<`)
             input = state.word()
         }

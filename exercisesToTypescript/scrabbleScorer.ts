@@ -26,11 +26,7 @@ const oldScoreKey: {} = {
 // code your transform function here
 function transform(oldObj: {}): {} {
     let newObj: {} = {}
-    for (let item in oldObj) {
-        for (let i = 0; i < oldObj[item].length; i++) {
-            newObj[`${oldObj[item][i]}`] = item
-        }
-    }
+    Object.keys(oldObj).map((item:string) => oldObj[item].map((x, index:number) => newObj[`${oldObj[item][index]}`] = item))
     return newObj
 }
 
@@ -48,9 +44,7 @@ let scrabble: ScoreKind = {
         // assigns points based on a given point object
         const word = input.toUpperCase().split('')
         let points: number = 0
-        for (let i = 0; i < word.length; i++) {
-            points += Number(pointStruct[word[i]])
-        }
+        word.map((x, index:number) => points += Number(pointStruct[word[index]]))
         return points
     }
 }
@@ -72,13 +66,13 @@ let vowel: ScoreKind = {
         let vowelsInWord: string[] = []
         let consInWord: string[] = []
 
-        for (let i = 0; i < word.length; i++) {
-            if (vowels.includes(word[i])) {
-                vowelsInWord.push(word[i])
+        word.map((x, index:number) => {
+            if (vowels.includes(word[index])) {
+                vowelsInWord.push(word[index])
             } else {
-                consInWord.push(word[i])
+                consInWord.push(word[index])
             }
-        }
+        })
 
         let points: number = (vowelsInWord.length * 3) + consInWord.length
 
@@ -123,11 +117,11 @@ function runProgram(scoreKinds: ScoreKind[]): void {
 
     let choice:number = state.alg(scoreKinds)
 
-    console.log('\nUsage: Enter a word to score, or "Stop" to exit the program.\nYou may also type "Select ScoreKind" to change how words are scored.')
+    console.log('\nUsage: Enter a word to score, or "Stop" to exit the program.\nYou may also type "Select Algorithm" to change how words are scored.')
 
     let input:string = state.word()
 
-    while (input !== 'Stop') {
+    while (input !== 'Stop' && input !== 'stop') {
         if (input.toLowerCase() === 'select algorithm') {
             choice = state.alg(scoreKinds)
             input = state.word()

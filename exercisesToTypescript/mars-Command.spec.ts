@@ -2,7 +2,7 @@ import assert from 'assert'
 import Command from './mars-Command'
 
 describe("Command class", () => {
-    // ignoring the first test of the assignment
+    // ignoring the first test of the class
     // b/c the compiler catches that error, lol
     // really all of these tests seem pointless with TS?
 

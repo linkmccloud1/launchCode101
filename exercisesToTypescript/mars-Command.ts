@@ -1,11 +1,40 @@
-type commands = number | string
+namespace Command {
+    export type Command =
+        | {
+            kind: 'MOVE'
+            value: number
+        }
+        | {
+            kind: 'MODE_CHANGE'
+            value: string
+        }
+        | {
+            kind: 'STATUS_CHECK'
+        }
 
-export default class Command {
-    commandType:string
-    value?:commands
+    export const moveCommand = (value: number): Command => ({
+        kind: 'MOVE',
+        value
+    })
 
-    constructor(commandType:string, value?:commands) {
-        this.commandType = commandType
-        this.value = value
+    export const modeCommand = (value: string): Command => {
+        switch (value) {
+            case 'NORMAL' :
+                return {
+                    kind: 'MODE_CHANGE',
+                    value
+                }
+            case 'LOW_POWER' :
+                return {
+                    kind: 'MODE_CHANGE',
+                    value
+                }
+            default :
+                throw Error
+        }
     }
+
+    export const statusCommand = (): Command => ({
+        kind: 'STATUS_CHECK'
+    })
 }

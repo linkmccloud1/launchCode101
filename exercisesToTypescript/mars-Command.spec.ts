@@ -1,18 +1,42 @@
 import assert from 'assert'
-import Command from './mars-Command'
+import c = Command
 
-describe("Command class", () => {
-    // ignoring the first test of the class
-    // b/c the compiler catches that error, lol
-    // really all of these tests seem pointless with TS?
+describe("Command type and functions", () => {
+    // test the moveCommand function
+    it("should return a Command of kind 'MOVE'", () => {
+        let output = c.moveCommand(100)
 
-    it("constructor sets command type", () => {
-        let output = new Command('MOVE')
-        assert.notStrictEqual(output.commandType, undefined)
+        switch (output.kind) {
+            case 'MODE_CHANGE' : return fail('Error: incorrect kind set.')
+            case 'STATUS_CHECK' : return fail('Error: incorrect kind set.')
+            case 'MOVE' : return assert.strictEqual(output, {kind: 'MOVE', value: 100})
+        }
     })
 
-    it("constructor sets a value passed in as the 2nd argument", () => {
-        let output = new Command('MOVE', 123)
-        assert.notStrictEqual(output.value, undefined)
+    // test the modeCommand function
+    it("should return a Command of kind 'MODE_CHANGE'", () => {
+        let output = c.modeCommand('LOW_POWER')
+
+        switch (output.kind) {
+            case 'MOVE' : return fail('Error: incorrect kind set.')
+            case 'STATUS_CHECK' : return fail('Error: incorrect kind set.')
+            case 'MODE_CHANGE' : return assert.strictEqual(output, {kind: 'MODE_CHANGE', value: 'LOW_POWER'})
+        }
+    })
+
+    it("should throw an error when MODE_CHANGE is given an invalid mode", () => {
+        let output = c.modeCommand('Foobar')
+        assert.strictEqual(output, Error)
+    })
+
+    // test the statusCommand function
+    it("should return a Command of kind 'STATUS_CHECK'", () => {
+        let output = c.statusCommand()
+
+        switch (output.kind) {
+            case 'MOVE' : return fail('Error: incorrect kind set.')
+            case 'MODE_CHANGE' : return fail('Error: incorrect kind set.')
+            case 'STATUS_CHECK' : return assert.strictEqual(output, {kind: 'STATUS_CHECK'})
+        }
     })
 })

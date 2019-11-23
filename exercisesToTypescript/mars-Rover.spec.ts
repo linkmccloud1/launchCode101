@@ -11,16 +11,17 @@ describe("Rover class", () => {
     })
     
     // add handling for message without commands
+    // m.newMessage('Testing functions', [c.checkStatus, c.moveRover(50), c.changeMode('NORMAL')])
 
     it("response returned by receiveMessage contains name of message", () => {
-        let message = new Message('Test message', [c.statusCommand()])
+        let message = new Message('Test message', [c.checkStatus()])
         let rover = new Rover(100)
         let output = rover.receiveMessage(message)
         assert.strictEqual(output.name, message.name)
     })
 
     it("response returned by receiveMessage includes two results if two commands are sent in the message", () => {
-        let array = [c.modeCommand('LOW_POWER'), c.statusCommand()]
+        let array = [c.changeMode('LOW_POWER'), c.checkStatus()]
         let message = new Message('Test message', array)
         let rover = new Rover(100)
         let output = rover.receiveMessage(message).results
@@ -29,7 +30,7 @@ describe("Rover class", () => {
 
     // it should return a status check correctly
     it("responds correctly to status check command", () => {
-        let message = new Message('Test message', [c.statusCommand()])
+        let message = new Message('Test message', [c.checkStatus()])
         let rover = new Rover(500)
         let output = rover.receiveMessage(message).results[0]
 
@@ -41,7 +42,7 @@ describe("Rover class", () => {
 
     // it should change mode correctly
     it("responds correctly to mode change command", () => {
-        let message = new Message('Test message', [c.modeCommand('LOW_POWER')])
+        let message = new Message('Test message', [c.changeMode('LOW_POWER')])
         let rover = new Rover(100)
         let output = rover.receiveMessage(message).results[0]
         assert.strictEqual(output.completed, true)
@@ -50,7 +51,7 @@ describe("Rover class", () => {
 
     // it should error and not move when in low power mode
     it("responds with 'completed: false' when attempting to move in LOW_POWER mode", () => {
-        let message = new Message('Test', [c.modeCommand('LOW_POWER'), c.moveCommand(20)])
+        let message = new Message('Test', [c.changeMode('LOW_POWER'), c.moveRover(20)])
         let rover = new Rover(100)
         let output = rover.receiveMessage(message).results[1]
         assert.strictEqual(output.completed, false)
@@ -58,7 +59,7 @@ describe("Rover class", () => {
 
     // it should move correctly when in normal mode
     it("responds with position for move command", () => {
-        let message = new Message('Test', [c.moveCommand(500)])
+        let message = new Message('Test', [c.moveRover(500)])
         let rover = new Rover(100)
         let results = rover.receiveMessage(message)
         assert.strictEqual(rover.position, 500)

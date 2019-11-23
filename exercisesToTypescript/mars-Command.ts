@@ -12,12 +12,12 @@ namespace Command {
             kind: 'STATUS_CHECK'
         }
 
-    export const moveCommand = (value: number): Command => ({
+    export const moveRover = (value: number): Command => ({
         kind: 'MOVE',
         value
     })
 
-    export const modeCommand = (value: string): Command => {
+    export const changeMode = (value: string): Command => {
         switch (value) {
             case 'NORMAL' :
                 return {
@@ -34,7 +34,7 @@ namespace Command {
         }
     }
 
-    export const statusCommand = (): Command => ({
+    export const checkStatus = (): Command => ({
         kind: 'STATUS_CHECK'
     })
 }

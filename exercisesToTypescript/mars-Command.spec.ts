@@ -2,9 +2,9 @@ import assert from 'assert'
 import c = Command
 
 describe("Command type and functions", () => {
-    // test the moveCommand function
+    // test the moveRover function
     it("should return a Command of kind 'MOVE'", () => {
-        let output = c.moveCommand(100)
+        let output = c.moveRover(100)
 
         switch (output.kind) {
             case 'MODE_CHANGE' : return fail('Error: incorrect kind set.')
@@ -13,9 +13,9 @@ describe("Command type and functions", () => {
         }
     })
 
-    // test the modeCommand function
+    // test the changeMode function
     it("should return a Command of kind 'MODE_CHANGE'", () => {
-        let output = c.modeCommand('LOW_POWER')
+        let output = c.changeMode('LOW_POWER')
 
         switch (output.kind) {
             case 'MOVE' : return fail('Error: incorrect kind set.')
@@ -25,13 +25,13 @@ describe("Command type and functions", () => {
     })
 
     it("should throw an error when MODE_CHANGE is given an invalid mode", () => {
-        let output = c.modeCommand('Foobar')
+        let output = c.changeMode('Foobar')
         assert.strictEqual(output, Error)
     })
 
-    // test the statusCommand function
+    // test the checkStatus function
     it("should return a Command of kind 'STATUS_CHECK'", () => {
-        let output = c.statusCommand()
+        let output = c.checkStatus()
 
         switch (output.kind) {
             case 'MOVE' : return fail('Error: incorrect kind set.')

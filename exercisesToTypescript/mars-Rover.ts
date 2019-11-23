@@ -1,5 +1,4 @@
-import c = Command
-import Message from './mars-Message'
+import m = Message
 
 type Status = {
     mode: string,
@@ -23,10 +22,16 @@ type Output =
         message: string
     }
 
-type Report = {
-    name: string,
-    results: Output[]
-}
+type Report = 
+    | {
+        kind: 'COMMANDS',
+        name: string,
+        results: Output[]
+    }
+    | {
+        kind: 'ECHO',
+        name: string
+    }
 
 const statusGen = (mode: string, generatorWatts: number, position: number): Status => ({
     mode,
@@ -62,7 +67,7 @@ export default class Rover {
         this.generatorWatts = 110
     }
 
-    processMessage(input: Message): Output[] {
+    processMessage(input: m.Commands): Output[] {
         let acc: Output[] = []
 
         input.commands.map((item) => {
@@ -94,12 +99,20 @@ export default class Rover {
         return acc
     }
 
-    receiveMessage(input: Message): Report {
-        let processed = this.processMessage(input)
+    receiveMessage(input: m.Message): Report {
+        if (input.kind === 'ECHO') {
+            return {
+                kind: 'ECHO',
+                name: input.name
+            }
+        } else {
+            let processed = this.processMessage(input)
 
-        return {
-            name: input.name,
-            results: processed
+            return {
+                kind: 'COMMANDS',
+                name: input.name,
+                results: processed
+            }
         }
     }
 }

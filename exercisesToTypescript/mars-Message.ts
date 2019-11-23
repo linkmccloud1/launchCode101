@@ -1,11 +1,33 @@
 import c = Command
 
-export default class Message {
-    name:string
-    commands:c.Command[]
+namespace Message {
+    export type Echo = {
+        kind: 'ECHO',
+        name: string
+    }
 
-    constructor(name:string, commands:c.Command[]) {
-        this.name = name
-        this.commands = commands
+    export type Commands = {
+        kind: 'COMMANDS',
+        name: string,
+        commands: c.Command[]
+    }
+
+    export type Message =
+        | Echo
+        | Commands
+    
+    export const newMessage = (name: string, commands?:c.Command[]): Message => {
+        if (commands === undefined) {
+            return {
+                kind: 'ECHO',
+                name
+            }
+        } else {
+            return {
+                kind: 'COMMANDS',
+                name,
+                commands
+            }
+        }
     }
 }

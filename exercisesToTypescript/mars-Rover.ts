@@ -1,27 +1,60 @@
-import Command from './mars-Command'
+import c = Command
 import Message from './mars-Message'
 
-type status = {
-    mode: string
-    generatorWatts: number
+type Status = {
+    mode: string,
+    generatorWatts: number,
     position: number
 }
 
-type report = {
-    completed: boolean
-    message?: string
-    roverStatus?: status
+type Output =
+    | {
+        kind: 'statusOutput',
+        completed: boolean,
+        roverStatus: Status
+    }
+    | {
+        kind: 'boolOutput',
+        completed: boolean
+    }
+    | {
+        kind: 'msgOutput',
+        completed: boolean,
+        message: string
+    }
+
+type Report = {
+    name: string,
+    results: Output[]
 }
 
-type feed = {
-    message: Message["name"]
-    results: report[]
-}
+const statusGen = (mode: string, generatorWatts: number, position: number): Status => ({
+    mode,
+    generatorWatts,
+    position
+})
+
+const statusOut = (completed: boolean, roverStatus: Status): Output => ({
+    kind: 'statusOutput',
+    completed,
+    roverStatus
+})
+
+const boolOut = (completed: boolean): Output => ({
+    kind: 'boolOutput',
+    completed
+})
+
+const msgOut = (completed: boolean, message: string): Output => ({
+    kind: 'msgOutput',
+    completed,
+    message
+})
 
 export default class Rover {
-    position: number
     mode: string
     generatorWatts: number
+    position: number
 
     constructor(position:number) {
         this.position = position
@@ -29,51 +62,44 @@ export default class Rover {
         this.generatorWatts = 110
     }
 
-    processMessage(array:Command[]):report[] {
-        let results:report[] = []
+    processMessage(input: Message): Output[] {
+        let acc: Output[] = []
 
-        for (let i = 0; i < array.length; i++) {
-            if (array[i].commandType === 'MOVE') {
-                if (this.mode === 'LOW_POWER') {
-                    results.push({completed: false})
-                } else if (this.mode === 'NORMAL') {
-                    this.position = Number(array[i].value)
-                    results.push({completed: true})
-                }
-            } else if (array[i].commandType === 'STATUS_CHECK') {
-                results.push({
-                    completed: true,
-                    roverStatus: {
-                        mode: this.mode,
-                        generatorWatts: this.generatorWatts,
-                        position: this.position
+        input.commands.map((item) => {
+            switch (item.kind) {
+                case 'MOVE' :
+                    switch(this.mode) {
+                        case 'LOW_POWER' :
+                            acc.push(boolOut(false))
+                            break
+                        case 'NORMAL' :
+                            this.position = item.value
+                            acc.push(boolOut(true))
+                            break
+                        default :
+                            acc.push(msgOut(false, 'Error: Invalid mode set!'))
                     }
-                })
-            } else if (array[i].commandType === 'MODE_CHANGE') {
-                this.mode = String(array[i].value)
-                results.push({completed: true})
-            } else {
-                results.push({completed: false, message: 'Error: Invalid command!'})
+                    break
+                case 'MODE_CHANGE' :
+                    this.mode = item.value
+                    acc.push(boolOut(true))
+                    break
+                case 'STATUS_CHECK' :
+                    acc.push(statusOut(true, statusGen(this.mode, this.generatorWatts, this.position)))
+                    break
+                default :
+                    acc.push(msgOut(false, 'Error: Invalid command!'))
             }
-        }
-
-        return results
+        })
+        return acc
     }
 
-    receiveMessage(input:Message):feed {
-        let processed:report[]
+    receiveMessage(input: Message): Report {
+        let processed = this.processMessage(input)
 
-        if (input.commands !== undefined) {
-            processed = this.processMessage(input.commands)
-        } else {
-            processed = [{completed:false, message: 'No commands given.'}]
-        }
-
-        let output:feed = {
-            message: input.name,
+        return {
+            name: input.name,
             results: processed
         }
-
-        return output
     }
 }

@@ -1,10 +1,10 @@
-import Command from './mars-Command'
+import c = Command
 
 export default class Message {
     name:string
-    commands?:Command[]
+    commands:c.Command[]
 
-    constructor(name:string, commands?:Command[]) {
+    constructor(name:string, commands:c.Command[]) {
         this.name = name
         this.commands = commands
     }

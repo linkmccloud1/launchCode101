@@ -1,6 +1,0 @@
-[submodule "class17-typescript"]
-	path = class17-typescript
-	url = github:lucible/typescript-lc101-projects.git
-[submodule "html-me-something"]
-	path = html-me-something
-	url = github:lucible/lc101-html-me-something

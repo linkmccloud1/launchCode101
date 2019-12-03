@@ -7,3 +7,9 @@
 [submodule "lc101-html-me-something"]
 	path = lc101-html-me-something
 	url = https://github.com/lucible/lc101-html-me-something.git
+[submodule "lc101-class14-studio"]
+	path = lc101-class14-studio
+	url = https://github.com/lucible/lc101-class14-studio
+[submodule "lc101-class15-studio"]
+	path = lc101-class15-studio
+	url = https://github.com/lucible/lc101-class15-studio.git

@@ -16,3 +16,6 @@
 [submodule "lc101-class16-studio"]
 	path = lc101-class16-studio
 	url = https://github.com/lucible/lc101-class16-studio
+[submodule "lc101-launch-checklist-form"]
+	path = lc101-launch-checklist-form
+	url = https://github.com/lucible/lc101-launch-checklist-form
